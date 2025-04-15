@@ -1,0 +1,625 @@
+<think>
+Okay, I need to create a simple JavaScript-based todo list app. The user wants to add, delete, and mark items as completed. Let's think about the steps required.
+
+First, the HTML structure. I'll need an input field for new tasks, a button to add them, and a list to display the tasks. Maybe a <ul> element with id 'todoList'. The input should have an id so I can reference it in JS.
+
+For the JavaScript part, I'll need event listeners. When the user clicks the add button or presses enter, the new task should be added to the list. Each list item should have buttons for deleting and marking as completed. 
+
+Wait, the delete button can be an 'x' or a delete icon. The completed feature can be a checkbox or a button that toggles the style, like striking through the text.
+
+Let's outline the functions:
+
+1. Add task: Get the input value, create a new list item with buttons, append to the list. Also, clear the input after adding.
+
+2. Delete task: When the delete button is clicked, remove the parent list item.
+
+3. Mark as completed: Toggle a class that adds a line-through style.
+
+I should use event delegation for the delete and complete buttons since they are dynamically added. That way, the event listeners can be attached to the parent element (the list) and handle events for dynamically added children.
+
+Also, need to store the tasks in an array or maybe just rely on the DOM for simplicity? Since the user didn't mention persistence, maybe just DOM is okay.
+
+Wait, but when the page reloads, the tasks will be lost. Since the task doesn't mention saving, maybe it's okay.
+
+Let me start coding.
+
+HTML structure:
+
+- Input field with id 'newTaskInput'
+- Button with id 'addTaskBtn' to add
+- The unordered list with id 'todoList'
+
+JavaScript setup:
+
+- Add an event listener to the add button. On click, get the value, check it's not empty, then create a new list item.
+
+Each list item should have:
+
+- The task text as a span
+- A delete button (maybe an X inside a span with a class)
+- A checkbox or a button to mark as completed. Let's use a checkbox. When checked, the task text is struck through.
+
+Wait, maybe a button that says 'Complete' which toggles the class. Hmm, using a checkbox might be more straightforward for the UI.
+
+Alternatively, using a button that toggles the completed state. Let's think of the markup for each list item.
+
+Each list item (li) could look like:
+
+<li>
+  <input type="checkbox" class="complete-checkbox">
+  <span class="task-text">Task 1</span>
+  <button class="delete-btn">X</button>
+</li>
+
+Then, when the checkbox is checked, the task text is struck through.
+
+The event listeners:
+
+For adding: on the add button's click, or maybe keydown on the input for enter key.
+
+For deleting: delegate click events on the delete-btn class elements.
+
+For completing: delegate click events on the complete-checkbox elements.
+
+So in the JavaScript:
+
+- On document ready (or window load), set up the event listeners.
+
+Wait, using event delegation for the list:
+
+document.getElementById('todoList').addEventListener('click', function(e) {
+  if (e.target.classList.contains('delete-btn')) {
+    // remove the parent li
+    e.target.parentElement.remove();
+  }
+  if (e.target.classList.contains('complete-checkbox')) {
+    const taskText = e.target.nextElementSibling;
+    taskText.classList.toggle('completed');
+  }
+});
+
+Wait, the checkbox is the first child, then the text, then the button. So nextElementSibling of the checkbox would be the task-text span. Then toggling a class that applies text-decoration: line-through.
+
+The CSS classes would need to be defined. Since the user didn't ask for CSS, maybe I should include it in the code?
+
+Wait, the user said "Write clean, complete code only. Do not add explanations or comments." But they want a working app, so probably need to include the CSS as well.
+
+Hmm, the user's output is to return only the code, so I should include HTML, CSS, and JS together in one block? Since it's a simple app, probably as a single HTML file with inline CSS and JS.
+
+Putting it all together:
+
+The HTML structure with a style section for CSS, and a script section for JS.
+
+The CSS:
+
+.completed {
+  text-decoration: line-through;
+}
+
+.delete-btn {
+  margin-left: 10px; /* some spacing */
+}
+
+The JavaScript functions:
+
+Adding the task:
+
+function addTask() {
+  const input = document.getElementById('newTaskInput');
+  const taskText = input.value.trim();
+  if (taskText === '') return;
+
+  const li = document.createElement('li');
+  li.innerHTML = `
+    <input type="checkbox" class="complete-checkbox">
+    <span class="task-text">${taskText}</span>
+    <button class="delete-btn">X</button>
+  `;
+  
+  document.getElementById('todoList').appendChild(li);
+  input.value = '';
+}
+
+Then, the event listeners:
+
+document.getElementById('addTaskBtn').addEventListener('click', addTask);
+
+// Also handle Enter key on input
+document.getElementById('newTaskInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    addTask();
+  }
+});
+
+And the delegation for delete and complete:
+
+document.getElementById('todoList').addEventListener('click', function(e) {
+  if (e.target.classList.contains('delete-btn')) {
+    e.target.parentElement.remove();
+  } else if (e.target.classList.contains('complete-checkbox')) {
+    const taskText = e.target.nextElementSibling;
+    taskText.classList.toggle('completed');
+  }
+});
+
+Putting all together in one HTML file.
+
+Wait, let me check for possible errors.
+
+When the checkbox is clicked, the target is the checkbox, so the nextElementSibling is the task-text span. Toggling 'completed' class on that. That should work.
+
+Testing scenario: when the checkbox is checked, the text is struck through. Unchecking removes it.
+
+Yes. For the delete button, clicking removes the parent li.
+
+This should work.
+
+Now, putting all into code:
+
+The HTML:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo List</title>
+  <style>
+    .completed { text-decoration: line-through; }
+    .delete-btn { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <input type="text" id="newTaskInput" placeholder="Add new task">
+  <button id="addTaskBtn">Add Task</button>
+  <ul id="todoList"></ul>
+
+  <script>
+    // JavaScript code here
+  </script>
+</body>
+</html>
+
+Now, the JavaScript part.
+
+Wait, the functions need to be in the script tags.
+
+Putting all together:
+
+The full code:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo List</title>
+  <style>
+    .completed { text-decoration: line-through; }
+    .delete-btn { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <input type="text" id="newTaskInput" placeholder="Add new task">
+  <button id="addTaskBtn">Add Task</button>
+  <ul id="todoList"></ul>
+
+  <script>
+    const addTask = () => {
+      const input = document.getElementById('newTaskInput');
+      const taskText = input.value.trim();
+      if (!taskText) return;
+      
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <input type="checkbox" class="complete-checkbox">
+        <span class="task-text">${taskText}</span>
+        <button class="delete-btn">X</button>
+      `;
+      document.getElementById('todoList').appendChild(li);
+      input.value = '';
+    };
+
+    document.getElementById('addTaskBtn').addEventListener('click', addTask);
+    document.getElementById('newTaskInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    document.getElementById('todoList').addEventListener('click', e => {
+      if (e.target.classList.contains('delete-btn')) {
+        e.target.closest('li').remove();
+      } else if (e.target.classList.contains('complete-checkbox')) {
+        e.target.closest('li').classList.toggle('completed');
+      }
+    });
+  </script>
+</body>
+</html>
+
+Wait a second, in the checkbox click handler, maybe toggling the parent li's class instead of the task-text span. Let me see.
+
+In the current code, when the checkbox is clicked, the target is the checkbox. The parent is the li, so I can toggle a class on the li. Then in CSS, the .completed .task-text would have the line-through.
+
+Alternatively, in my initial code, the task-text's class was toggled. Let me see:
+
+Original approach:
+
+taskText.classList.toggle('completed');
+
+In that case, the CSS would be .completed { ... }
+
+But in the code above, the class is added to the task-text span.
+
+Alternatively, toggling the li's class might be better, so that other elements inside can also be styled if needed. Let me adjust.
+
+Wait, in the current code, when I do e.target.nextElementSibling, that's the task-text span. So toggling its class would apply directly to the text.
+
+Alternatively, perhaps better to toggle the li's class. Let's see.
+
+Let me adjust the code:
+
+In the event listener for checkbox click:
+
+e.target.closest('li').classList.toggle('completed');
+
+Then, in CSS:
+
+li.completed .task-text { text-decoration: line-through; }
+
+This way, the class is on the li, and the span is styled accordingly.
+
+But in my previous code, when I used taskText.classList, it was adding the class to the span. Both approaches work, but perhaps using the li's class is more organized.
+
+Wait, but in my code above, in the current draft, I had:
+
+e.target.closest('li').classList.toggle('completed');
+
+Which would toggle the li's class. Let me see if that's correct.
+
+Wait, in the previous code I wrote:
+
+In the initial draft, I had:
+
+taskText.classList.toggle('completed');
+
+But in the code I wrote just now, I changed it to toggle the li's class.
+
+Wait, perhaps I made a mistake here.
+
+Wait, in my first approach:
+
+The checkbox is inside the li, so when the checkbox is clicked, the parent is the li. So, when the checkbox is clicked, the target is the checkbox.
+
+To toggle the class on the task-text span, I can do:
+
+const taskTextSpan = e.target.nextElementSibling;
+
+taskTextSpan.classList.toggle('completed');
+
+Alternatively, to toggle the li's class:
+
+li = e.target.closest('li');
+
+li.classList.toggle('completed');
+
+Then, in CSS, the .completed class is on the li, and the task-text is inside it.
+
+Either way is okay. Let me check which code is in the current draft.
+
+In the code I wrote just now, in the click event listener on the todoList:
+
+if (e.target.classList.contains('delete-btn')) {
+  e.target.closest('li').remove();
+} else if (e.target.classList.contains('complete-checkbox')) {
+  e.target.closest('li').classList.toggle('completed');
+}
+
+Then, in CSS, the .completed class would need to style the task-text:
+
+li.completed .task-text { text-decoration: line-through; }
+
+Alternatively, the previous approach of adding the class to the task-text span:
+
+taskText.classList.toggle('completed');
+
+This requires the CSS to be .completed { text-decoration: line-through; }, applied to the task-text span.
+
+Either is acceptable. The first approach (using the li's class) might be better for encapsulation, but both work.
+
+I think the code I wrote earlier in the draft is okay.
+
+Wait, but in the code I wrote in the draft, the CSS has .completed { text-decoration: line-through; }, so if the class is added to the li, but the text is inside the task-text, then the CSS would need to be li.completed .task-text.
+
+Wait, in the CSS I had written before:
+
+.completed { text-decoration: line-through; }
+
+But if the class is on the li, then this CSS would not apply to the span.
+
+Ah, that's a mistake. So the current code in the draft has an error.
+
+Wait, in the initial code I had:
+
+In CSS, the .completed class is applied to the task-text span, so the CSS is okay if the class is added to the task-text.
+
+But in the draft code I wrote later, the code toggles the li's class, so the CSS would need to be adjusted.
+
+Therefore, there's a mistake in the draft code.
+
+So, to correct that:
+
+If in the code I toggle the li's class, then the CSS should be:
+
+li.completed .task-text { text-decoration: line-through; }
+
+Alternatively, if we keep the CSS as before, then the code should toggle the task-text's class.
+
+Let me decide which is better.
+
+Let me choose the first approach (toggling task-text's class):
+
+So, in the code:
+
+else if (e.target.classList.contains('complete-checkbox')) {
+  const taskText = e.target.nextElementSibling;
+  taskText.classList.toggle('completed');
+}
+
+This way, the CSS as before (.completed { ... }) works.
+
+Hence, the code should be:
+
+document.getElementById('todoList').addEventListener('click', e => {
+  if (e.target.classList.contains('delete-btn')) {
+    e.target.parentElement.remove();
+  } else if (e.target.classList.contains('complete-checkbox')) {
+    const taskText = e.target.nextElementSibling;
+    taskText.classList.toggle('completed');
+  }
+});
+
+This way, the CSS is correct.
+
+Wait, but the delete button is inside the li, so when you click the delete button, parentElement is the li, so e.target.parentElement.remove() is okay.
+
+Wait, e.target is the delete button, so parentElement is the li. So that's correct.
+
+Okay, so the code in the first approach is okay.
+
+Therefore, the final code should be:
+
+Putting all together:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo List</title>
+  <style>
+    .completed { text-decoration: line-through; }
+  </style>
+</head>
+<body>
+  <div id="todoList">
+    <!-- Todos will be added here -->
+  </div>
+  <script>
+    // Your code here
+    const todoList = document.getElementById('todoList');
+
+    function addTodo() {
+      const todoText = prompt('Enter your todo:');
+      if (todoText) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${todoText}</span>
+          <button class="delete">Delete</button>
+          <button class="complete">Complete</button>
+        `;
+        todoList.appendChild(li);
+      }
+    }
+
+    todoList.addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete')) {
+        e.target.parentElement.remove();
+      } else if (e.target.classList.contains('complete')) {
+        const span = e.target.previousElementSibling;
+        span.classList.toggle('completed');
+      }
+    });
+
+    // Add a button to trigger adding a todo
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Todo';
+    addButton.onclick = addTodo;
+    document.body.appendChild(addButton);
+  </script>
+</body>
+</html>
+
+Wait, but in the previous code I was writing, the code structure was different. Let me make sure.
+
+Wait, the user's question was:
+
+"Write a program that allows users to add, delete, and mark tasks as complete in a to-do list. The tasks should be displayed in a list, and when marked as complete, they should be crossed out. Provide a user-friendly interface with buttons for each task and a form to add new tasks."
+
+So, the user wants a to-do list with add, delete, and complete functionality.
+
+The code I have in my head is similar to what I just wrote, but let me check.
+
+Wait, in my code above, the complete button toggles the 'completed' class on the span, which has text-decoration: line-through.
+
+The delete button removes the parent element (the li).
+
+The addTodo function prompts for a todo and adds it as a list item with buttons.
+
+Also, an add button is added to the body.
+
+Yes, this code should work.
+
+But I need to make sure that the complete button is correctly targeting the span.
+
+In the HTML structure, the buttons are after the span, so the previousElementSibling of the complete button is the span.
+
+Yes.
+
+Alternatively, using nextElementSibling for the delete button, but in this case, the delete button is the first button, but actually, in the code:
+
+The li's innerHTML is:
+
+<span>${todoText}</span>
+<button class="delete">Delete</button>
+<button class="complete">Complete</button>
+
+So, the elements in the li are:
+
+- span
+- delete button
+- complete button
+
+Therefore, the complete button's previousElementSibling is the delete button, no?
+
+Wait, no. Wait, the siblings are:
+
+The first child is the span, then delete button is second, complete button is third.
+
+Therefore, for the complete button (third child):
+
+previousElementSibling is the delete button (second child).
+
+Therefore, that code is incorrect.
+
+Ah, here's a mistake.
+
+The complete button is after the delete button, so to get the span, we need to go back two siblings?
+
+Wait, the span is the first child, then delete button is second, complete button third.
+
+Therefore, to get the span from the complete button, we need to go to the previousElementSibling of the previousElementSibling.
+
+Alternatively, better to traverse up to the parent li and then find the span.
+
+Alternatively, the complete button's parent is the li. So:
+
+const span = e.target.parentElement.querySelector('span');
+
+That would be more reliable.
+
+Because in the current structure, the span is the first child of the li.
+
+Therefore, the code can be adjusted as follows:
+
+else if (e.target.classList.contains('complete')) {
+  const span = e.target.parentElement.querySelector('span');
+  span.classList.toggle('completed');
+}
+
+That way, regardless of the button's position, it can find the span.
+
+Alternatively, the first element child:
+
+const span = e.target.parentElement.firstElementChild;
+
+Either way.
+
+Alternatively, the code can be written as:
+
+const span = e.target.previousElementSibling.previousElementSibling;
+
+But that's less reliable if the structure changes.
+
+Therefore, better to use querySelector.
+
+Alternatively, using closest to find the li and then querySelector.
+
+Therefore, the corrected code for the complete button's part:
+
+else if (e.target.classList.contains('complete')) {
+  const li = e.target.closest('li');
+  const span = li.querySelector('span');
+  span.classList.toggle('completed');
+}
+
+This is better.
+
+So, in the code:
+
+    todoList.addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete')) {
+        e.target.parentElement.remove();
+      } else if (e.target.classList.contains('complete')) {
+        const li = e.target.closest('li');
+        const span = li.querySelector('span');
+        span.classList.toggle('completed');
+      }
+    });
+
+This way, it's more robust.
+
+Also, the CSS is important to have:
+
+  <style>
+    .completed {
+      text-decoration: line-through;
+    }
+  </style>
+
+Otherwise, the class won't do anything.
+
+Therefore, putting it all together:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do List</title>
+  <style>
+    .completed {
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <div id="todoList"></div>
+  <button onclick="addTodo()">Add Todo</button>
+
+  <script>
+    const todoList = document.getElementById('todoList');
+
+    function addTodo() {
+      const task = prompt('Enter your task:');
+      if (task) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${task}</span>
+          <button class="delete">Delete</button>
+          <button class="complete">Complete</button>
+        `;
+        todoList.appendChild(li);
+      }
+    }
+
+    todoList.addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete')) {
+        const item = e.target.closest('li');
+        if (item) item.remove();
+      } else if (e.target.classList.contains('complete')) {
+        const item = e.target.closest('li');
+        if (item) {
+          const span = item.querySelector('span');
+          span.classList.toggle('completed');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
+This should work.
+
+Let me check step by step:
+
+- When adding a task: prompt, create li with span and buttons.
+
+- Clicking delete button: find the closest li (the parent list item) and remove it.
+
+- Clicking complete button: find the closest li, then the span inside, toggle the class.
+
+- The CSS ensures that the span's text is crossed out when the class is applied.
+
+Yes, this should fulfill the requirements.
